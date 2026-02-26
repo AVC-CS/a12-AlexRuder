@@ -38,10 +38,10 @@ int main() {
 
     cout << "=== MEMORY SEGMENT BOUNDARIES ===" << endl << endl;
 
-    cout << "--- TEXT SEGMENT (Code) --- "
-         << "main=0x" << hex << (uintptr_t)&main
-         << " checkStack=0x" << hex << (uintptr_t)&checkStack
-         << endl << endl;
+    cout << "--- TEXT SEGMENT (Code) ---" << endl;
+        cout << "main=0x" << hex << (uintptr_t)&main << endl;
+        cout << "func=0x" << hex << (uintptr_t)&checkStack << endl;
+        cout << endl;
 
     cout << "--- DATA SEGMENT (Initialized Globals) --- "
          << "&g_init1=0x" << hex << (uintptr_t)&g_init1
