@@ -1,70 +1,81 @@
 #include <iostream>
-#include <cstdlib>  // for malloc
+#include <cstdlib>
+#include <cstdint>
 using namespace std;
 
-// TODO: Declare 2 initialized global variables (DATA segment)
+// DATA segment
+int g_init1 = 42;
+int g_init2 = 99;
 
-// TODO: Declare 2 uninitialized global variables (BSS segment)
+// BSS segment
+int g_uninit1;
+int g_uninit2;
 
-// Stack check function: receives address from caller (parent frame)
-// and compares with a local variable (child frame)
 void checkStack(int* parentAddr) {
     int childVar = 0;
+
     cout << "--- STACK SEGMENT (Cross-function comparison) ---" << endl;
-    // TODO: Print parentAddr value (points to main's local var - parent frame)
-    // TODO: Print &parentAddr (parameter's own address - child frame)
-    // TODO: Print &childVar (local var address - child frame)
-    // TODO: Print "Stack grows: DOWN" or "UP" based on comparison
-    //       Compare: parentAddr > &childVar ? "DOWN" : "UP"
-    //       (parent frame address vs child frame address)
+
+    cout << "Parent frame local var address: " << hex << (uintptr_t)parentAddr << endl;
+    cout << "Address of parameter parentAddr: " << hex << (uintptr_t)&parentAddr << endl;
+    cout << "Address of childVar: " << hex << (uintptr_t)&childVar << endl;
+
+    if ((uintptr_t)parentAddr > (uintptr_t)&childVar)
+        cout << "Stack grows: DOWN" << endl;
+    else
+        cout << "Stack grows: UP" << endl;
+
     cout << endl;
 }
 
 int main() {
+    int localVar = 1234;
 
-    // TODO: Declare a local variable (STACK - will be passed to checkStack)
+    void* heap1 = malloc(1024);
+    void* heap2 = malloc(1024);
 
-    // TODO: Allocate 2 heap variables using malloc (use larger sizes, e.g. 1024)
-    //       Note: new may not allocate sequentially; malloc with larger sizes
-    //       is more reliable for demonstrating heap growth direction
+    cout << "=== MEMORY SEGMENT BOUNDARIES ===" << endl << endl;
 
-    cout << "=== MEMORY SEGMENT BOUNDARIES ===" << endl;
-    cout << endl;
-
-    // TODO: Print TEXT segment - 2 function addresses
-    //       e.g., (void*)&main and (void*)&checkStack
     cout << "--- TEXT SEGMENT (Code) ---" << endl;
-    // ...
+    cout << "Address of main():       " << hex << (uintptr_t)&main << endl;
+    cout << "Address of checkStack(): " << hex << (uintptr_t)&checkStack << endl;
     cout << endl;
 
-    // TODO: Print DATA segment - 2 initialized global addresses + values
     cout << "--- DATA SEGMENT (Initialized Globals) ---" << endl;
-    // ...
+    cout << "&g_init1 = " << hex << (uintptr_t)&g_init1 << endl;
+    cout << "&g_init2 = " << hex << (uintptr_t)&g_init2 << endl;
     cout << endl;
 
-    // TODO: Print BSS segment - 2 uninitialized global addresses + values
     cout << "--- BSS SEGMENT (Uninitialized Globals) ---" << endl;
-    // ...
+    cout << "&g_uninit1 = " << hex << (uintptr_t)&g_uninit1 << endl;
+    cout << "&g_uninit2 = " << hex << (uintptr_t)&g_uninit2 << endl;
     cout << endl;
 
-    // STACK: call checkStack with address of your local variable
-    // TODO: checkStack(&yourLocalVar);
+    checkStack(&localVar);
 
-    // TODO: Print HEAP segment - 2 heap addresses + comparison
-    //       Print "Heap grows: UP" or "DOWN"
     cout << "--- HEAP SEGMENT (Dynamic Allocation) ---" << endl;
-    // ...
+    cout << "heap1 = " << hex << (uintptr_t)heap1 << endl;
+    cout << "heap2 = " << hex << (uintptr_t)heap2 << endl;
+
+    if ((uintptr_t)heap1 < (uintptr_t)heap2)
+        cout << "Heap grows: UP" << endl;
+    else
+        cout << "Heap grows: DOWN" << endl;
+
     cout << endl;
 
-    // TODO: Print relative position summary
     cout << "=== RELATIVE POSITION SUMMARY ===" << endl;
-    // ...
+    cout << "TEXT  near: " << hex << (uintptr_t)&main << endl;
+    cout << "DATA  near: " << hex << (uintptr_t)&g_init1 << endl;
+    cout << "BSS   near: " << hex << (uintptr_t)&g_uninit1 << endl;
+    cout << "HEAP  near: " << hex << (uintptr_t)heap1 << endl;
+    cout << "STACK near: " << hex << (uintptr_t)&localVar << endl;
 
-    // TODO: Free all heap allocations
+    free(heap1);
+    free(heap2);
 
     return 0;
 }
-
 /*
  * EXPERIMENTAL RESULTS:
  * TODO: After running your program, explain what you observed:
