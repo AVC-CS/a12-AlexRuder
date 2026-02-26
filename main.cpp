@@ -14,9 +14,10 @@ int g_uninit2;
 void checkStack(int* parentAddr) {
     int childVar = 0;
 
+    // NO ADDRESSES ON THIS LINE
     cout << "--- STACK SEGMENT (Cross-function comparison) ---" << endl;
 
-    // Three stack addresses, in correct order
+    // These three lines are the ONLY stack addresses
     cout << "parent=0x" << hex << (uintptr_t)parentAddr << endl;
     cout << "param=0x" << hex << (uintptr_t)&parentAddr << endl;
     cout << "child=0x" << hex << (uintptr_t)&childVar << endl;
