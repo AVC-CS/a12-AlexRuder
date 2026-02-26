@@ -3,22 +3,23 @@
 #include <cstdint>
 using namespace std;
 
-// DATA segment
+// DATA segment (initialized globals)
 int g_init1 = 42;
 int g_init2 = 99;
 
-// BSS segment
+// BSS segment (uninitialized globals)
 int g_uninit1;
 int g_uninit2;
 
+// STACK check function
 void checkStack(int* parentAddr) {
     int childVar = 0;
 
-    cout << "--- STACK SEGMENT (Cross-function comparison) ---" << endl;
-
-    cout << "Parent frame local var address: " << hex << (uintptr_t)parentAddr << endl;
-    cout << "Address of parameter parentAddr: " << hex << (uintptr_t)&parentAddr << endl;
-    cout << "Address of childVar: " << hex << (uintptr_t)&childVar << endl;
+    cout << "--- STACK SEGMENT (Cross-function comparison) --- "
+         << "parent=0x" << hex << (uintptr_t)parentAddr
+         << " param=0x" << hex << (uintptr_t)&parentAddr
+         << endl;
+    cout << "child=0x" << hex << (uintptr_t)&childVar << endl;
 
     if ((uintptr_t)parentAddr > (uintptr_t)&childVar)
         cout << "Stack grows: DOWN" << endl;
@@ -36,26 +37,35 @@ int main() {
 
     cout << "=== MEMORY SEGMENT BOUNDARIES ===" << endl << endl;
 
-    cout << "--- TEXT SEGMENT (Code) ---" << endl;
-    cout << "Address of main():       " << hex << (uintptr_t)&main << endl;
-    cout << "Address of checkStack(): " << hex << (uintptr_t)&checkStack << endl;
+    // TEXT segment: 2 addresses on header line
+    cout << "--- TEXT SEGMENT (Code) --- "
+         << "main=0x" << hex << (uintptr_t)&main
+         << " checkStack=0x" << hex << (uintptr_t)&checkStack
+         << endl;
     cout << endl;
 
-    cout << "--- DATA SEGMENT (Initialized Globals) ---" << endl;
-    cout << "&g_init1 = " << hex << (uintptr_t)&g_init1 << endl;
-    cout << "&g_init2 = " << hex << (uintptr_t)&g_init2 << endl;
+    // DATA segment: 2 addresses on header line
+    cout << "--- DATA SEGMENT (Initialized Globals) --- "
+         << "&g_init1=0x" << hex << (uintptr_t)&g_init1
+         << " &g_init2=0x" << hex << (uintptr_t)&g_init2
+         << endl;
     cout << endl;
 
-    cout << "--- BSS SEGMENT (Uninitialized Globals) ---" << endl;
-    cout << "&g_uninit1 = " << hex << (uintptr_t)&g_uninit1 << endl;
-    cout << "&g_uninit2 = " << hex << (uintptr_t)&g_uninit2 << endl;
+    // BSS segment: 2 addresses on header line
+    cout << "--- BSS SEGMENT (Uninitialized Globals) --- "
+         << "&g_uninit1=0x" << hex << (uintptr_t)&g_uninit1
+         << " &g_uninit2=0x" << hex << (uintptr_t)&g_uninit2
+         << endl;
     cout << endl;
 
+    // STACK segment: header has 2 addresses, next line has 1 → total 3
     checkStack(&localVar);
 
-    cout << "--- HEAP SEGMENT (Dynamic Allocation) ---" << endl;
-    cout << "heap1 = " << hex << (uintptr_t)heap1 << endl;
-    cout << "heap2 = " << hex << (uintptr_t)heap2 << endl;
+    // HEAP segment: 2 addresses on header line
+    cout << "--- HEAP SEGMENT (Dynamic Allocation) --- "
+         << "heap1=0x" << hex << (uintptr_t)heap1
+         << " heap2=0x" << hex << (uintptr_t)heap2
+         << endl;
 
     if ((uintptr_t)heap1 < (uintptr_t)heap2)
         cout << "Heap grows: UP" << endl;
@@ -64,18 +74,20 @@ int main() {
 
     cout << endl;
 
+    // Summary (extra, not used by tests)
     cout << "=== RELATIVE POSITION SUMMARY ===" << endl;
-    cout << "TEXT  near: " << hex << (uintptr_t)&main << endl;
-    cout << "DATA  near: " << hex << (uintptr_t)&g_init1 << endl;
-    cout << "BSS   near: " << hex << (uintptr_t)&g_uninit1 << endl;
-    cout << "HEAP  near: " << hex << (uintptr_t)heap1 << endl;
-    cout << "STACK near: " << hex << (uintptr_t)&localVar << endl;
+    cout << "TEXT  near: 0x" << hex << (uintptr_t)&main << endl;
+    cout << "DATA  near: 0x" << hex << (uintptr_t)&g_init1 << endl;
+    cout << "BSS   near: 0x" << hex << (uintptr_t)&g_uninit1 << endl;
+    cout << "HEAP  near: 0x" << hex << (uintptr_t)heap1 << endl;
+    cout << "STACK near: 0x" << hex << (uintptr_t)&localVar << endl;
 
     free(heap1);
     free(heap2);
 
     return 0;
 }
+
 /*
  * EXPERIMENTAL RESULTS:
  * TODO: After running your program, explain what you observed:
